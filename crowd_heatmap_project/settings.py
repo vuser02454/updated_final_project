@@ -50,6 +50,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'https://crowd-heatmap.onrender.com',
     'https://*.onrender.com',
+    'https://*.railway.app',
+    'https://*.up.railway.app',
 ]
 
 
