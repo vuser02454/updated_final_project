@@ -1,0 +1,16 @@
+django>=5.2
+channels==4.1.0
+daphne==4.1.2
+opencv-python-headless==4.10.0.84
+numpy
+requests
+pandas
+scikit-learn
+google-generativeai
+python-dotenv
+matplotlib
+whitenoise==6.7.0
+dj-database-url==2.2.0
+psycopg2-binary>=2.9.0
+gunicorn>=22.0.0
+uvicorn[standard]>=0.30.0

@@ -1,0 +1,158 @@
+{% extends "users/base_auth.html" %}
+{% load static %}
+
+{% block title %}Log In - Crowd Heatmap{% endblock %}
+
+{% block auth_content %}
+<style>
+    .form-floating > .form-control,
+    .form-floating > .form-control-plaintext {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-main);
+        transition: all 0.3s ease;
+        border-radius: 10px;
+    }
+
+    .form-floating > .form-control:focus {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--accent);
+        box-shadow: 0 0 15px rgba(102, 252, 241, 0.2);
+    }
+
+    .form-floating > label {
+        color: var(--text-muted);
+    }
+
+    .form-floating > .form-control:focus ~ label,
+    .form-floating > .form-control:not(:placeholder-shown) ~ label {
+        color: var(--accent);
+        opacity: 0.9;
+        transform: scale(.85) translateY(-.5rem) translateX(.15rem);
+    }
+
+    /* Prevent Bootstrap from slapping a white background behind the floating text label */
+    .form-floating > label::after {
+        background-color: transparent !important;
+    }
+
+    /* AutoFill reset for Chrome so it doesn't break glassmorphism */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px #1f2833 inset !important;
+        -webkit-text-fill-color: white !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
+    .btn-login {
+        background: linear-gradient(90deg, #45a29e, #66fcf1);
+        color: #0b0c10;
+        border: none;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 0.8rem;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .btn-login:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px -10px rgba(102, 252, 241, 0.6);
+        color: #000;
+    }
+
+    .form-check-input {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    .form-check-input:checked {
+        background-color: var(--accent);
+        border-color: var(--accent);
+    }
+
+    /* Subtle slide-in for alerts */
+    .alert-custom {
+        background: rgba(220, 53, 69, 0.15);
+        border: 1px solid rgba(220, 53, 69, 0.3);
+        color: #ff8e99;
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+    }
+    .alert-info-custom {
+        background: rgba(102, 252, 241, 0.1);
+        border: 1px solid rgba(102, 252, 241, 0.2);
+        color: var(--accent);
+    }
+</style>
+
+<div class="card border-0">
+    <div class="card-body p-4 p-md-5">
+        <h2 class="mb-3 fw-bold">Welcome Back</h2>
+        <p class="text-muted mb-4 fs-6">Enter your credentials to access your dashboard.</p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-custom{% else %}alert-info-custom{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-custom alert-dismissible fade show" role="alert">
+                {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+
+            <!-- Notice the placeholder=" " is required for form-floating CSS hack to work -->
+            <div class="form-floating mb-4">
+                <input type="email" name="{{ form.username.name }}" class="form-control {% if form.username.errors %}is-invalid{% endif %}" id="id_username" placeholder="name@example.com" value="{{ form.username.value|default:'' }}" required>
+                <label for="id_username">Email Address</label>
+                {% if form.username.errors %}
+                    <div class="invalid-feedback d-block mt-2">
+                        {% for error in form.username.errors %}• {{ error }}{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-floating mb-2">
+                <input type="password" name="{{ form.password.name }}" class="form-control {% if form.password.errors %}is-invalid{% endif %}" id="id_password" placeholder="Password" required>
+                <label for="id_password">Password</label>
+                {% if form.password.errors %}
+                    <div class="invalid-feedback d-block mt-2">
+                        {% for error in form.password.errors %}• {{ error }}{% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 mt-2">
+                <div class="form-check">
+                    {{ form.remember_me }}
+                    <label class="form-check-label text-muted small user-select-none" for="id_remember_me">
+                        Remember me
+                    </label>
+                </div>
+                <a href="{% url 'password_reset' %}" class="small">Forgot password?</a>
+            </div>
+
+            <div class="d-grid gap-2 mt-2">
+                <button type="submit" class="btn btn-login btn-lg shadow-sm">
+                    Log In
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-4 text-center">
+            <span class="text-muted small">Don't have an account? </span>
+            <a href="{% url 'register' %}" class="fw-semibold small">Create account</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
